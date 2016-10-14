@@ -9,7 +9,6 @@ public class Runner {
             System.out.println("Name: " + bf.getPersonenObjekte().get(i));
             System.out.println("Adresse: " + bf.getAdressObjekte().get(i));
             System.out.println("Mail: " + bf.getMailObjekte().get(i));
-
         }
     }
 }
