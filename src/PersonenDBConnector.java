@@ -1,18 +1,27 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 /**
  * Created by Denis on 14.10.2016.
  */
 public class PersonenDBConnector {
-    private String url="\\localhost";
-    private String user;
-    private String pass;
+    private String url = "jdbc:postgresql://localhost/wetter";
+    private String user = "postgres";
+    private String pass = "password";
+    private Connection con;
 
-    public PersonenDBConnector(String url, String user, String pass) {
+    public PersonenDBConnector(String url, String user, String pass) throws SQLException {
         this.url = url;
         this.user = user;
         this.pass = pass;
-    }
 
-    public void dbAnlegen() {
+        this.con = DriverManager.getConnection(url, user, pass);
+
+    }
+//todo: SQL-Highlighting...
+    public void dbAnlegen() throws SQLException {
+con.createStatement();
 
     }
 
