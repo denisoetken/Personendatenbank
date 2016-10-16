@@ -4,7 +4,7 @@ import java.sql.*;
  * Created by Denis on 14.10.2016.
  */
 public class PersonenDBConnector {
-    private String url = "jdbc:postgresql://localhost/wetter";
+    private String url = "jdbc:postgresql://localhost/personen";
     private String user = "postgres";
     private String pass = "password";
     private Connection con;
@@ -13,7 +13,7 @@ public class PersonenDBConnector {
         this.url = url;
         this.user = user;
         this.pass = pass;
-
+//        con.createStatement("\c db personen;");
         this.con = DriverManager.getConnection(url, user, pass);
 
     }
@@ -28,7 +28,7 @@ public class PersonenDBConnector {
         //  t_person löschen, wenn vorhanden, dann erstellen
         st.addBatch("DROP TABLE IF EXISTS t_person CASCADE;");
         st.addBatch("CREATE TABLE t_person (pk_personID SERIAL NOT NULL, name TEXT NOT NULL," +
-                " vorname TEXT NOT NULL, email TEXT, fk_t_adresse_adressID TEXT, " +
+                " vorname TEXT NOT NULL, email TEXT, fk_t_adresse_adressID INTEGER, " +
                 "CONSTRAINT PK_t_person_personID PRIMARY KEY(pk_personID)," +
                 " CONSTRAINT fk_t_adresse_adressID FOREIGN KEY(fk_t_adresse_adressID) REFERENCES t_adresse(pk_adressID)" +
                 " ON UPDATE CASCADE ON DELETE CASCADE);");
@@ -36,15 +36,17 @@ public class PersonenDBConnector {
     }
 
     public void speichern(Person p) {
-        int verknuepfung;
-        // todo: id der adresse rausziehen und an person übergeben
-        try {
-            try (PreparedStatement stAdress = con.prepareStatement("INSERT INTO t_adresse(strasse, stadt) VALUES (?,?);")) {
-                stAdress.setString(1, p.getStrasse());
-                stAdress.setString(2, p.getWohnOrt());
-                verknuepfung = stAdress.getResultSet("select pk_adressID");
-                // todo: durchlaufen bis null vorm befüllen, dann +1 = neue id?
-            }
+        int verknuepfung = 0;
+        try (PreparedStatement stAdress = con.prepareStatement("INSERT INTO t_adresse(strasse, stadt) VALUES (?,?);")) {
+            stAdress.setString(1, p.getStrasse());
+            stAdress.setString(2, p.getWohnOrt());
+            String query = "select pk_adressID from t_adresse where strasse = " + p.getStrasse() + " && stadt = " + p.getWohnOrt() + ";";
+            Statement stID = con.createStatement();
+            ResultSet res = stID.executeQuery(query);
+            res.next();
+            res.getInt(1);
+            System.out.println(res.getInt(1));
+            verknuepfung = Integer.parseInt(stID.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -53,20 +55,17 @@ public class PersonenDBConnector {
             stPers.setString(1, p.getNachName());
             stPers.setString(2, p.getVorName());
             stPers.setString(3, p.geteMail());
-            stPers.setString(4, p.getNachName());
-        } catch (SQLException e) {
-            e.printStackTrace();
+            stPers.setInt(4, verknuepfung);
+        } catch (SQLException e1) {
+            e1.printStackTrace();
         }
     }
-
+// todo Ist die Person eindeutig, wenn alle Attribute (außer der ID) gleich sind?
     private int adresseIdHolen(Person p) {
         //Statement st = con.createStatement("SELECT fk_t_adresse_adressID from t_person where name="+p.getNachName()+"&&);");
-        int adressID;
-        String query = "select fk_t_adresse_adressID from t_person where (name=" + p.getNachName() + " && vorname = " + p.getVorName() + " && email= " + p.geteMail() + ");";
-
-        adressID = con.createStatement("SELECT fk_t_adresse_adressID from t_person where (name=" + p.getNachName() + " && vorname=" + p.getVorName() + " && email=" + p.geteMail() + "));");
-
-
+        int adressID = 0;
+//        String query = "select fk_t_adresse_adressID from t_person where (name=" + p.getNachName() + " && vorname = " + p.getVorName() + " && email= " + p.geteMail() + ");";
+//        adressID = con.createStatement("SELECT fk_t_adresse_adressID from t_person where (name=" + p.getNachName() + " && vorname=" + p.getVorName() + " && email=" + p.geteMail() + "));");
         return adressID;
     }
 
@@ -77,6 +76,10 @@ public class PersonenDBConnector {
     }
 
     public void disconnect() {
-
+        try {
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
