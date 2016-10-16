@@ -60,7 +60,9 @@ public class PersonenDBConnector {
             e1.printStackTrace();
         }
     }
-// todo Ist die Person eindeutig, wenn alle Attribute (außer der ID) gleich sind?
+
+    // todo Ist die Person eindeutig, wenn alle Attribute (außer der ID) gleich sind?
+    // todo In der echten Welt ja (EMail), aber in der DB eigentlich nicht
     private int adresseIdHolen(Person p) {
         //Statement st = con.createStatement("SELECT fk_t_adresse_adressID from t_person where name="+p.getNachName()+"&&);");
         int adressID = 0;
