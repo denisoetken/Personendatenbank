@@ -1,6 +1,4 @@
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * Created by Denis on 14.10.2016.
@@ -11,13 +9,19 @@ public class Runner {
         try {
             db = new PersonenDBConnector("jdbc:postgresql://localhost/personen", "postgres", "password");
             db.dbAnlegen();
-            db.speichern(new Person());
-            db.test();
-
+            for (int i = 0; i < 10000; i++) {
+                Person p = new Person();
+                db.speichern(p);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            db.disconnect();
+            try {
+                db.disconnect();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Disconnect war nicht erfolgreich");
+            }
         }
     }
 }
