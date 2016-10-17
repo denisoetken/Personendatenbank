@@ -23,3 +23,20 @@ strasse text not null,
 stadt text not null,
 constraint PK_t_adresse_adressID primary key(pk_adressID)
 );
+
+
+
+
+//        try (PreparedStatement stAdress = con.prepareStatement("INSERT INTO t_adresse(strasse, stadt) VALUES (?,?);")) {
+//            stAdress.setString(1, p.getStrasse());
+//            stAdress.setString(2, p.getWohnOrt());
+//            String query = "select pk_adressID from t_adresse where strasse = " + p.getStrasse() + " && stadt = " + p.getWohnOrt() + ";";
+//            Statement stID = con.createStatement();
+//            ResultSet res = stID.executeQuery(query);
+//            res.next();
+//            res.getInt(1);
+//            System.out.println(res.getInt(1));
+//            verknuepfung = Integer.parseInt(stID.toString());
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }

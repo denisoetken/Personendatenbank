@@ -13,9 +13,7 @@ public class PersonenDBConnector {
         this.url = url;
         this.user = user;
         this.pass = pass;
-//        con.createStatement("\c db personen;");
         this.con = DriverManager.getConnection(url, user, pass);
-
     }
 
     //todo: SQL-Highlighting...
@@ -33,47 +31,52 @@ public class PersonenDBConnector {
                 " CONSTRAINT fk_t_adresse_adressID FOREIGN KEY(fk_t_adresse_adressID) REFERENCES t_adresse(pk_adressID)" +
                 " ON UPDATE CASCADE ON DELETE CASCADE);");
         st.executeBatch();
+        st.close();
     }
 
     public void speichern(Person p) {
         int verknuepfung = 0;
-        try (PreparedStatement stAdress = con.prepareStatement("INSERT INTO t_adresse(strasse, stadt) VALUES (?,?);")) {
-            stAdress.setString(1, p.getStrasse());
-            stAdress.setString(2, p.getWohnOrt());
-            String query = "select pk_adressID from t_adresse where strasse = " + p.getStrasse() + " && stadt = " + p.getWohnOrt() + ";";
-            Statement stID = con.createStatement();
-            ResultSet res = stID.executeQuery(query);
-            res.next();
-            res.getInt(1);
-            System.out.println(res.getInt(1));
-            verknuepfung = Integer.parseInt(stID.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        adresseSpeichern(p);
         try (PreparedStatement stPers = con.prepareStatement("INSERT INTO t_person(name, vorname, email, fk_t_adresse_adressID) VALUES (?,?,?,?);")) {
             stPers.setString(1, p.getNachName());
             stPers.setString(2, p.getVorName());
             stPers.setString(3, p.geteMail());
+
+            if (adresseIdHolen(p) > 0) {
+                verknuepfung = adresseIdHolen(p);
+            } else {
+                verknuepfung = adresseSpeichern(p);
+            }
             stPers.setInt(4, verknuepfung);
         } catch (SQLException e1) {
             e1.printStackTrace();
         }
     }
 
-    // todo Ist die Person eindeutig, wenn alle Attribute (außer der ID) gleich sind?
-    // todo In der echten Welt ja (EMail), aber in der DB eigentlich nicht
     private int adresseIdHolen(Person p) {
-        //Statement st = con.createStatement("SELECT fk_t_adresse_adressID from t_person where name="+p.getNachName()+"&&);");
-        int adressID = 0;
-//        String query = "select fk_t_adresse_adressID from t_person where (name=" + p.getNachName() + " && vorname = " + p.getVorName() + " && email= " + p.geteMail() + ");";
-//        adressID = con.createStatement("SELECT fk_t_adresse_adressID from t_person where (name=" + p.getNachName() + " && vorname=" + p.getVorName() + " && email=" + p.geteMail() + "));");
-        return adressID;
+        int zahl = 0;
+        String sql = "SELECT id FROM adresse WHERE stadt=? AND strasse_hausnummer=?;";
+        try (PreparedStatement pstm = con.prepareStatement(sql)) {
+            pstm.setString(1, p.getWohnOrt());
+            pstm.setString(2, p.getStrasse());
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                zahl = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return zahl;
     }
 
     private int adresseSpeichern(Person p) {
         int settedID = 0;
-
+        try (PreparedStatement psta = con.prepareStatement("INSERT INTO t_adresse(stadt,strasse) VALUES (?,?);")) {
+            psta.setString(1, p.getWohnOrt());
+            psta.setString(2, p.getStrasse());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return settedID;
     }
 
