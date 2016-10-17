@@ -17,7 +17,7 @@ public class Runner {
         try {
             db = new PersonenDBConnector("jdbc:postgresql://localhost/personen", "postgres", "password");
             db.dbAnlegen();
-            db.speichern(new Person());
+//            db.speichern(new Person());
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
