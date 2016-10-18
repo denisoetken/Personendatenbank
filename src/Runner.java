@@ -7,8 +7,10 @@ public class Runner {
     public static void main(String[] args) {
         PersonenDBConnector db = null;
         try {
+//            Aufruf der Connection mit Übergabe der Parameter für die Anmeldung an der Datenbank
             db = new PersonenDBConnector("jdbc:postgresql://localhost/personen", "postgres", "password");
             db.dbAnlegen();
+//            Schleife = Anzahl der Personen, die anzulegen sind
             for (int i = 0; i < 10000; i++) {
                 Person p = new Person();
                 db.speichern(p);
@@ -16,6 +18,7 @@ public class Runner {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+//            Disconnect auf jeden Fall
             try {
                 db.disconnect();
             } catch (SQLException e) {

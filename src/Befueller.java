@@ -5,7 +5,7 @@ import java.util.List;
  * Created by Denis on 14.10.2016.
  */
 public class Befueller {
-
+//      Klasse wird hier erstmal nicht benötigt
     private int anzahl = 0;
     private List<String> personenObjekte = new ArrayList<>();
     private List<String> adressObjekte = new ArrayList<>();
