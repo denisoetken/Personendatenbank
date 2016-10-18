@@ -50,7 +50,6 @@ public class PersonenDBConnector {
             verknuepfung = adresseIdHolen(p);
             stPers.setInt(4, verknuepfung);
 //           Endgültige Ausführung des preparedStatements
-            stPers.addBatch();
             stPers.executeBatch();
         } catch (SQLException e1) {
             e1.printStackTrace();
@@ -83,10 +82,7 @@ public class PersonenDBConnector {
         try (PreparedStatement psta = con.prepareStatement("INSERT INTO t_adresse(stadt,strasse) VALUES (?,?);")) {
 //         Die ID wird mit 0 initialisiert, dieser Wert ändert sich nur, wenn es die Adresse schon gibt
 //         , sonst liefert IDHolen ja nichts zurück und die Variable wird nach der Speicherung geholt
-//            if (adresseIdHolen(p) > 0) {
-//                settedID = adresseIdHolen(p);
-//            } else {
-            if (!(settedID != 0)) {
+            if (settedID == 0) {
                 psta.setString(1, p.getWohnOrt());
                 psta.setString(2, p.getStrasse());
                 psta.addBatch();
