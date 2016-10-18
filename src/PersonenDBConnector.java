@@ -14,7 +14,11 @@ public class PersonenDBConnector {
         this.user = user;
         this.pass = pass;
 //        Herstellen der Connection
-        this.con = DriverManager.getConnection(url, user, pass);
+        try {
+            this.con = DriverManager.getConnection(url, user, pass);
+        } catch (SQLException e) {
+            System.out.println("Die Verbindung konnte nicht hergestellt werden!");
+        }
     }
 
     public void dbAnlegen() throws SQLException {
@@ -50,7 +54,7 @@ public class PersonenDBConnector {
             stPers.executeBatch();
         } catch (SQLException e1) {
             e1.printStackTrace();
-            System.out.println("Fehler beim Speichern");
+            System.out.println("Fehler beim Speichern der Person");
         }
     }
 
@@ -98,4 +102,31 @@ public class PersonenDBConnector {
     public void disconnect() throws SQLException {
         this.con.close();
     }
+
+    // Test, ob es doppelte Adressen gibt:
+    public void test1() throws SQLException {
+        PreparedStatement testST1 = con.prepareStatement("SELECT a.strasse, a.stadt FROM t_adresse AS a" +
+                " GROUP BY a.strasse, a.stadt HAVING count(*)>1;");
+        ResultSet testRes = testST1.executeQuery();
+        while (testRes.next()) {
+            System.out.println("Folgendce Adressen sind doppelt vorhanden:");
+            System.out.println("Strasse: " + testRes.getString(2) + "Stadt: " + testRes.getString(3));
+        }
+    }
+
+    //    Stimmt die Anzahl der Zeilen?
+    public void test2(int anzahl) throws SQLException {
+        int testWert = 0;
+        PreparedStatement testST2 = con.prepareStatement("SELECT count(pk_personID) FROM t_person;");
+        ResultSet result = testST2.executeQuery();
+        while (result.next()) {
+            testWert = result.getInt(1);
+        }
+        if (testWert != anzahl) {
+            System.out.println("Die Anzahl der Personen stimmt nicht.");
+        }
+//        Frage nach der Anzahl der Adressen macht hier keinen Sinn,
+//        da doppelte Einträge ja nicht geschrieben werden und ich so die effektive Anzahl gar nicht kennen kann
+    }
 }
+
