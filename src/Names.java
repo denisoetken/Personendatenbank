@@ -29,12 +29,14 @@ public class Names {
 
     private String[] lateinWorte = {"a", "ac", "accumsan", "ad", "adipiscing", "Aenean", "aliquam", "Aliquam", "aliquet", "amet", "ante", "aptent", "arcu", "at", "auctor", "augue", "bibendum", "blandit", "Class", "commodo", "condimentum", "congue", "consectetuer", "consequat", "conubia", "convallis", "Cras", "cubilia", "Cum", "Curabitur", "Curae", "cursus", "dapibus", "diam", "dictum", "dignissim", "dis", "dolor", "Donec", "dui", "Duis", "egestas", "eget", "eleifend", "elementum", "elit", "enim", "erat", "eros", "est", "et", "Etiam", "eu", "euismod", "facilisi", "facilisis", "fames", "faucibus", "felis", "fermentum", "feugiat", "fringilla", "Fusce", "gravida", "habitant", "hendrerit", "hymenaeos", "iaculis", "id", "imperdiet", "In", "in", "inceptos", "Integer", "interdum", "ipsum", "justo", "lacinia", "lacus", "laoreet", "lectus", "leo", "libero", "ligula", "litora", "lobortis", "lorem", "Lorem", "luctus", "Maecenas", "magna", "magnis", "malesuada", "massa", "mattis", "mauris", "Mauris", "metus", "mi", "molestie", "mollis", "montes", "morbi", "Morbi", "mus", "Nam", "nascetur", "natoque", "nec", "neque", "netus", "nibh", "nisi", "nisl", "non", "nonummy", "nostra", "nulla", "Nulla", "Nullam", "Nunc", "nunc", "odio", "orci", "ornare", "parturient", "pede", "pellentesque", "Pellentesque", "penatibus", "per", "pharetra", "Phasellus", "placerat", "porta", "porttitor", "posuere", "Praesent", "pretium", "primis", "Proin", "pulvinar", "purus", "quam", "quis", "Quisque", "rhoncus", "ridiculus", "risus", "rutrum", "sagittis", "sapien", "scelerisque", "Sed", "sed", "sem", "semper", "senectus", "sit", "sociis", "sociosqu", "sodales", "sollicitudin", "suscipit", "Suspendisse", "taciti", "tellus", "tempor", "tempus", "tincidunt", "torquent", "tortor", "tristique", "turpis", "ullamcorper", "ultrices", "ultricies", "urna", "ut", "Ut", "varius", "vehicula", "vel", "velit", "venenatis", "Vestibulum", "vestibulum", "vitae", "Vivamus", "viverra", "volutpat", "vulputate"};
 
+//    Erzeugen einer Zufallszahl, zwischen 0 und der Länge des betroffenen Arrays
 
     public String Zufall(String[] array) {
         int zahl = this.zufallsZahl.nextInt(array.length);
         return array[zahl];
     }
 
+//    Erzeugen eines fiktiven Prozentwertes für die Frage, ob z.B. männlich oder weiblich etc.
     public boolean prozenter(int prozent) {
         boolean ergebnis = false;
         int prozenter = this.zufallsZahl.nextInt(100);
@@ -46,8 +48,11 @@ public class Names {
         return ergebnis;
     }
 
+//    1. 1 oder 2 Vornamen?
+//    2. männlich, oder weiblich
     public String vornamenErzeugen() {
         String vorName;
+//      Prozenter: Zufallszahl in den ersten 25, dann = 25% und damit Doppelname
         if (this.prozenter(25)) {
             if (this.prozenter(50)) {
                 vorName = this.Zufall(maennlNamen) + ' ' + this.Zufall(maennlNamen);
@@ -64,6 +69,7 @@ public class Names {
         return vorName;
     }
 
+//    Zusammengesetzter Nachname?
     public String nachNamenErzeugen() {
         String nachName;
         if (this.prozenter(30)) {
@@ -75,6 +81,7 @@ public class Names {
         return nachName;
     }
 
+//
     public String wohnOrtErzeugen() {
         String wohnOrt;
         wohnOrt = this.Zufall(this.staedteNamen);
@@ -112,6 +119,7 @@ public class Names {
         if (this.prozenter(50)) {
             sb.append(this.Zufall(lateinWorte));
         } else if (this.prozenter(80)) {
+//            trim für keine Leerzeichen
             sb.append(vorName.trim() + "." + nachName.trim());
         } else {
             sb.append(nachName);
@@ -121,7 +129,7 @@ public class Names {
         sb.append(this.Zufall(lateinWorte).trim());
         sb.append(".");
         sb.append(this.Zufall(topLevelDomains));
-
-        return sb.toString();
+//      EMail Adressen sollen immer klein geschrieben sein
+        return sb.toString().toLowerCase();
     }
 }
