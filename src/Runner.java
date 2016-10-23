@@ -7,7 +7,7 @@ public class Runner {
     public static void main(String[] args) {
         PersonenDBConnector db = null;
         try {
-            db = new PersonenDBConnector("jdbc:postgresql://localhost/personen", "postgres", "password");
+            db = new PersonenDBConnector();
             db.dbAnlegen();
             for (int i = 0; i < 10000; i++) {
                 Person p = new Person();

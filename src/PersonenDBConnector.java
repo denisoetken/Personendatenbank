@@ -1,18 +1,37 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 /**
  * Created by Denis on 14.10.2016.
  */
 public class PersonenDBConnector {
-    private String url = "jdbc:postgresql://localhost/personen";
-    private String user = "postgres";
-    private String pass = "password";
+    private String url;
+    private String user;
+    private String pass;
     private Connection con;
+    private Properties konfig = new Properties();
 
-    public PersonenDBConnector(String url, String user, String pass) throws SQLException {
-        this.url = url;
-        this.user = user;
-        this.pass = pass;
+    public PersonenDBConnector() throws SQLException {
+        // Property - Einsatz
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader("src/konfig.properties"));
+            this.konfig.load(bfr);
+            bfr.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+      this.url = konfig.getProperty("db_url");
+       this.user = konfig.getProperty("db_user");
+     this.pass = konfig.getProperty("db_pass");
+  //      this.url="jdbc:postgresql://localhost/personen";
+    //    this.user="postgres";
+      //  this.pass="password";
         this.con = DriverManager.getConnection(url, user, pass);
     }
 
@@ -87,6 +106,5 @@ public class PersonenDBConnector {
 
     public void disconnect() throws SQLException {
         this.con.close();
-
     }
 }
