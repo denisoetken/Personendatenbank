@@ -1,3 +1,5 @@
+import Person.Person;
+
 import java.sql.SQLException;
 
 /**
@@ -5,9 +7,9 @@ import java.sql.SQLException;
  */
 public class Runner {
     public static void main(String[] args) {
-        PersonenDBConnector db = null;
+        Person.PersonenDBConnector db = null;
         try {
-            db = new PersonenDBConnector();
+            db = new Person.PersonenDBConnector();
             db.dbAnlegen();
             for (int i = 0; i < 10000; i++) {
                 Person p = new Person();
